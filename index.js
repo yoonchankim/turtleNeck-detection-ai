@@ -1,24 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <div>Teachable Machine Image Model</div>
-    <button type="button" onclick="init()">Start</button>
-    <div id="webcam-container"></div>
-    <div id="label-container"></div>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
-    <script type="text/javascript">
         // More API functions here:
         // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
     
         // the link to your model provided by Teachable Machine export panel
         const URL = "./my_model/";
-    
+        const good_audio=document.querySelector(".good_audio");
+        const turtle_audio=document.querySelector(".turtle_audio");
+        const turtle=document.getElementById("turtle");
         let model, webcam, labelContainer, maxPredictions;
     
         // Load the image model and setup the webcam
@@ -32,10 +19,9 @@
             // Note: the pose library adds "tmImage" object to your window (window.tmImage)
             model = await tmImage.load(modelURL, metadataURL);
             maxPredictions = model.getTotalClasses();
-    
+            setInterval(webcamAudioAlert,5000);
             // Convenience function to setup a webcam
-            const flip = true; // whether to flip the webcam
-            webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+            webcam = new tmImage.Webcam(200, 200, true); // width, height, flip
             await webcam.setup(); // request access to the webcam
             await webcam.play();
             window.requestAnimationFrame(loop);
@@ -58,13 +44,26 @@
         async function predict() {
             // predict can take in an image, video or canvas html element
             const prediction = await model.predict(webcam.canvas);
-            for (let i = 0; i < maxPredictions; i++) {
-                const classPrediction =
-                    prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-                labelContainer.childNodes[i].innerHTML = classPrediction;
+            if(prediction[0].probability.toFixed(2)>=0.80){
+                turtle.innerHTML ="거북목 자세에요";
+            }
+            else if(prediction[0].probability.toFixed(2)<=0.20){
+                turtle.innerHTML ="바른 자세에요";
+            }
+            else{
+                turtle.innerHTML ="몰라요";
+            }
+            //  for (let i = 0; i < maxPredictions; i++) {
+            //      const classPrediction =
+            //          prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+            //      labelContainer.childNodes[i].innerHTML = classPrediction;
+            //  }
+        }
+        function webcamAudioAlert(){
+            if(turtle.innerHTML==="바른 자세에요"){
+                good_audio.play();
+            }
+            else if(turtle.innerHTML==="거북목 자세에요"){
+                turtle_audio.play();
             }
         }
-    </script>
-    
-</body>
-</html>
