@@ -7,8 +7,7 @@
         const turtle_audio=document.querySelector(".turtle_audio");
         const turtle=document.getElementById("turtle");
         let model, webcam, labelContainer, maxPredictions;
-    
-        // Load the image model and setup the webcam
+        init();// Load the image model and setup the webcam
         async function init() {
             const modelURL = URL + "model.json";
             const metadataURL = URL + "metadata.json";

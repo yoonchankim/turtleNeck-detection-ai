@@ -5,4 +5,23 @@ body{
     align-items: center;
     justify-content: center;
     margin:0;
+    flex-direction: column;
+    background-color:#95a5a6;
+    overflow: hidden;
 }
+@keyframes fadeIn{
+    from{
+      opacity:0;
+    }
+    to{
+      opacity:1;
+    }
+  }
+.bgImage{
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    z-index:-1;
+    animation:fadeIn 1s ease-in-out;
+  }
