@@ -6,19 +6,23 @@
         const good_audio=document.querySelector(".good_audio");
         const turtle_audio=document.querySelector(".turtle_audio");
         const turtle=document.getElementById("turtle");
+        const start=document.getElementsByClassName("start");
+        const form=document.querySelector("form");
+        const numInput=form.querySelector(".num");
+        const select=document.querySelector("select");
+        let number=1;
         let model, webcam, labelContainer, maxPredictions;
-        init();// Load the image model and setup the webcam
+        // Load the image model and setup the webcam
         async function init() {
             const modelURL = URL + "model.json";
             const metadataURL = URL + "metadata.json";
-    
+            form.addEventListener("submit",handleSubmit);
             // load the model and metadata
             // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
             // or files from your local hard drive
             // Note: the pose library adds "tmImage" object to your window (window.tmImage)
             model = await tmImage.load(modelURL, metadataURL);
             maxPredictions = model.getTotalClasses();
-            setInterval(webcamAudioAlert,5000);
             // Convenience function to setup a webcam
             webcam = new tmImage.Webcam(200, 200, true); // width, height, flip
             await webcam.setup(); // request access to the webcam
@@ -59,10 +63,28 @@
             //  }
         }
         function webcamAudioAlert(){
-            if(turtle.innerHTML==="바른 자세에요"){
-                good_audio.play();
+            if(select.options[select.selectedIndex].value==="text-mode"){
+                if(turtle.innerHTML==="바른 자세에요"){
+                    good_audio.play();
+                    alert("바른자세에요.이 자세 계속 유지해주세요.")
+                }
+                else if(turtle.innerHTML==="거북목 자세에요"){
+                    turtle_audio.play();
+                    alert("거북목 자세에요.이 자세 바른 자세로 바꿔주세요.")
+                }
             }
-            else if(turtle.innerHTML==="거북목 자세에요"){
-                turtle_audio.play();
+            if(select.options[select.selectedIndex].value==="audio-mode"){
+                if(turtle.innerHTML==="바른 자세에요"){
+                    good_audio.play();
+                }
+                else if(turtle.innerHTML==="거북목 자세에요"){
+                    turtle_audio.play();
+                }
             }
         }
+        function handleSubmit(event) {
+            event.preventDefault();
+            number=parseInt(numInput.value);
+            setInterval(webcamAudioAlert,number*60000);
+        }        
+        init();
